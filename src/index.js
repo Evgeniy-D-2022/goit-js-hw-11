@@ -36,6 +36,7 @@ async function onImgForm(evt) {
 async function onLoadMoreBtn() {
     try {
         loadMoreButton.disabled();
+        createImage.page += 1;
         const markup = await getImgMarkup();
         createGallery(markup);
         loadMoreButton.enabled();

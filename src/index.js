@@ -15,9 +15,7 @@ imgForm.addEventListener('submit', onImgForm);
 loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
 async function onImgForm(evt) {
-    evt.preventDefault();
-
-    
+    evt.preventDefault();    
 
     loadMoreButton.show();
 
@@ -28,8 +26,13 @@ async function onImgForm(evt) {
 
     if (createImage.heading === '') {
       Notiflix.Notify.warning('Enter correct data');
+      resetMarkup();
+      loadMoreButton.disabled();
       return;
     }
+    
+    // loadMoreButton.show();
+    
 };
 
 async function onLoadMoreBtn() {

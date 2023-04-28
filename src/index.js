@@ -14,4 +14,93 @@ const loadMoreButton = new LoadMoreButton({ selector: '.load-more', isHidden: tr
 imgForm.addEventListener('submit', onImgForm);
 loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
+async function onImgForm(evt) {
+    evt.preventDefault();
 
+    loadMoreButton.show();
+
+    createImage.heading = evt.currentTarget.elements.searchQuery.value.trim();
+    createImage.resetPage();
+    resetMarkup();
+    await onLoadMoreBtn();
+
+    // if (createImage.heading === '') {
+    //     Notiflix.Notify.info('Enter a request');
+    //     return;
+    // }
+
+    
+//     loadMoreBtn.disabled();
+};
+
+async function onLoadMoreBtn() {
+    try {
+        loadMoreButton.disabled();
+        const markup = await getImgMarkup();
+        createGallery(markup);
+        loadMoreButton.enabled();
+
+        if (createImage.page > 1 && createImage.page > createImage.per_page) {
+            loadMoreButton.hide();
+            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+            
+        }
+    } catch (err) {
+        onError(err);
+    }
+}
+
+async function getImgMarkup() {
+    try {
+        const { hits } = await createImage.getImage();
+        if (hits.length === 0) throw new Error("Sorry, no results");
+        return hits.reduce((markup, hit) => markup + createMarkup(hit), '');
+    } catch (err) {
+        console.log(err);
+        onError(err);
+    }
+}
+
+function createMarkup({
+    webformatURL,
+    largeImageURL,
+    tags,
+    likes,
+    views,
+    comments,
+    downloads,
+  }) {
+    return `
+    <div class="photo-card">
+        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <div class="info">
+        <p class="info-item">
+            <b>Likes<br>${likes}</b>
+        </p>
+        <p class="info-item">
+            <b>Views<br>${views}</b>
+        </p>
+        <p class="info-item">
+            <b>Comments<br>${comments}</b>
+        </p>
+        <p class="info-item">
+            <b>Downloads<br>${downloads}</b>
+        </p>
+    </div>
+    </div>`;
+}
+
+function createGallery(markup) {
+    imgGallery.insertAdjacentHTML('beforeend', markup);
+}
+
+function resetMarkup() {
+    imgGallery.innerHTML = '';
+}
+
+function onError(err) {
+    console.log(err);
+    loadMoreButton.hide();
+    resetMarkup();
+    Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+}

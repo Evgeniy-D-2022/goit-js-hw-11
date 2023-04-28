@@ -17,6 +17,8 @@ loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 async function onImgForm(evt) {
     evt.preventDefault();
 
+    
+
     loadMoreButton.show();
 
     createImage.heading = evt.currentTarget.elements.searchQuery.value.trim();
@@ -24,13 +26,10 @@ async function onImgForm(evt) {
     resetMarkup();
     await onLoadMoreBtn();
 
-    // if (createImage.heading === '') {
-    //     Notiflix.Notify.info('Enter a request');
-    //     return;
-    // }
-
-    
-//     loadMoreBtn.disabled();
+    if (createImage.heading === '') {
+      Notiflix.Notify.warning('Enter correct data');
+      return;
+    }
 };
 
 async function onLoadMoreBtn() {
